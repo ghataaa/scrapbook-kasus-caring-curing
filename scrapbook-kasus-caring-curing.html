@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scrapbook KDK – Caring & Curing</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF6EF;
+    --warm-white: #FFF9F2;
+    --blush: #F2C4B8;
+    --rose: #D98C7E;
+    --dusty-rose: #C4776A;
+    --sage: #7A9E7E;
+    --sage-light: #A8C5AB;
+    --sage-dark: #4A7A5A;
+    --navy: #2C3E50;
+    --gold: #C9A84C;
+    --gold-light: #E8D5A3;
+    --tan: #D4B896;
+    --brown: #8B6F55;
+    --ink: #2A2010;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: #E8E0D5;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ── NAVIGATION DOTS ── */
+  .nav-dots {
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100;
+  }
+  .nav-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: rgba(139,111,85,0.3);
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 2px solid var(--brown);
+  }
+  .nav-dot.active, .nav-dot:hover {
+    background: var(--rose);
+    border-color: var(--dusty-rose);
+    transform: scale(1.3);
+  }
+
+  /* ── SLIDE BASE ── */
+  .slide {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── DECORATIVE HELPERS ── */
+  .tape {
+    position: absolute;
+    background: rgba(201,168,76,0.35);
+    border-radius: 2px;
+    transform-origin: center;
+  }
+  .tape-h { width: 80px; height: 18px; }
+  .tape-v { width: 18px; height: 80px; }
+  .tape-sm { width: 50px; height: 14px; }
+
+  .paper-card {
+    background: var(--warm-white);
+    border-radius: 4px;
+    box-shadow: 3px 4px 18px rgba(0,0,0,0.13), 0 1px 3px rgba(0,0,0,0.08);
+    position: relative;
+  }
+
+  .lined-paper {
+    background:
+      repeating-linear-gradient(
+        transparent, transparent 27px,
+        rgba(100,140,160,0.18) 27px, rgba(100,140,160,0.18) 28px
+      ),
+      var(--warm-white);
+  }
+
+  .dot-pattern {
+    background-image: radial-gradient(circle, rgba(139,111,85,0.12) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+
+  .sticker-flower {
+    font-size: 28px;
+    position: absolute;
+    opacity: 0.85;
+    user-select: none;
+  }
+  .sticker-med {
+    font-size: 22px;
+    position: absolute;
+    opacity: 0.8;
+    user-select: none;
+  }
+  .corner-fold {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 28px; height: 28px;
+    background: linear-gradient(225deg, #E8E0D5 50%, rgba(212,184,150,0.4) 50%);
+    border-top-left-radius: 3px;
+  }
+
+  .ribbon {
+    display: inline-block;
+    padding: 4px 18px;
+    border-radius: 2px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: white;
+  }
+
+  /* ════════════════════════════
+     SLIDE 1 – COVER
+  ════════════════════════════ */
+  #slide-1 {
+    background:
+      radial-gradient(ellipse at 20% 80%, rgba(242,196,184,0.45) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(168,197,171,0.4) 0%, transparent 50%),
+      var(--cream);
+  }
+
+  .cover-board {
+    width: min(700px, 95vw);
+    position: relative;
+  }
+
+  .cover-main-card {
+    background: var(--warm-white);
+    border-radius: 6px;
+    box-shadow: 6px 8px 32px rgba(0,0,0,0.15);
+    padding: 52px 52px 44px;
+    position: relative;
+    transform: rotate(-0.5deg);
+  }
+
+  .cover-border {
+    position: absolute;
+    inset: 12px;
+    border: 2px solid;
+    border-image: repeating-linear-gradient(90deg, var(--gold) 0, var(--gold) 8px, transparent 8px, transparent 14px) 1;
+    border-radius: 2px;
+    pointer-events: none;
+  }
+
+  .cover-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.2;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .cover-subtitle {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(18px, 3vw, 24px);
+    color: var(--dusty-rose);
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .cover-divider {
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), var(--rose), var(--sage), var(--gold), transparent);
+    margin: 20px 0;
+    border-radius: 2px;
+  }
+
+  .identity-box {
+    background: linear-gradient(135deg, rgba(242,196,184,0.25), rgba(168,197,171,0.2));
+    border: 1px solid rgba(201,168,76,0.35);
+    border-radius: 6px;
+    padding: 20px 26px;
+    margin: 20px 0;
+  }
+  .identity-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 4px 8px;
+    align-items: start;
+    margin-bottom: 6px;
+    font-size: 13.5px;
+  }
+  .identity-row:last-child { margin-bottom: 0; }
+  .id-label { color: var(--brown); font-weight: 700; letter-spacing: 0.5px; }
+  .id-value { color: var(--navy); font-weight: 400; }
+
+  .cover-badge {
+    background: linear-gradient(135deg, var(--sage), var(--sage-dark));
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 20px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-top: 8px;
+  }
+
+  /* ════════════════════════════
+     SLIDE 2 – KASUS & MASALAH
+  ════════════════════════════ */
+  #slide-2 {
+    background:
+      radial-gradient(ellipse at 10% 30%, rgba(168,197,171,0.3) 0%, transparent 45%),
+      radial-gradient(ellipse at 90% 70%, rgba(242,196,184,0.3) 0%, transparent 45%),
+      #EDE6DC;
+    align-items: flex-start;
+    padding-top: 60px;
+  }
+
+  .slide-content-2 {
+    width: min(900px, 95vw);
+    position: relative;
+  }
+
+  .slide-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .slide-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 64px;
+    font-weight: 700;
+    color: rgba(139,111,85,0.18);
+    line-height: 1;
+    user-select: none;
+  }
+  .slide-title-block h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(20px, 3.5vw, 28px);
+    color: var(--navy);
+  }
+  .slide-title-block p {
+    font-size: 12px;
+    color: var(--brown);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .kasus-card {
+    background: var(--warm-white);
+    border-radius: 6px;
+    padding: 22px;
+    box-shadow: 4px 5px 20px rgba(0,0,0,0.1);
+    transform: rotate(-0.8deg);
+    position: relative;
+    grid-column: 1 / -1;
+  }
+  .kasus-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--dusty-rose);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .kasus-card p {
+    font-size: 13px;
+    line-height: 1.75;
+    color: #3a3020;
+  }
+
+  .masalah-card {
+    background: var(--warm-white);
+    border-radius: 5px;
+    padding: 18px 20px;
+    box-shadow: 3px 4px 14px rgba(0,0,0,0.1);
+    position: relative;
+  }
+  .masalah-card.fisik { transform: rotate(0.6deg); }
+  .masalah-card.psiko { transform: rotate(-0.5deg); }
+  .masalah-card.sosial { transform: rotate(0.3deg); }
+
+  .masalah-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 2px dashed;
+  }
+  .masalah-header.fisik { border-color: var(--rose); }
+  .masalah-header.psiko { border-color: var(--sage); }
+  .masalah-header.sosial { border-color: var(--gold); }
+
+  .masalah-icon {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .masalah-icon.fisik { background: rgba(217,140,126,0.2); }
+  .masalah-icon.psiko { background: rgba(122,158,126,0.2); }
+  .masalah-icon.sosial { background: rgba(201,168,76,0.2); }
+
+  .masalah-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: var(--navy);
+  }
+  .masalah-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .masalah-list li {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: #3a3020;
+    padding-left: 16px;
+    position: relative;
+  }
+  .masalah-list li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  .masalah-list.fisik li::before { color: var(--rose); }
+  .masalah-list.psiko li::before { color: var(--sage-dark); }
+  .masalah-list.sosial li::before { color: var(--gold); }
+
+  /* ════════════════════════════
+     SLIDE 3 – CURING vs CARING
+  ════════════════════════════ */
+  #slide-3 {
+    background:
+      radial-gradient(ellipse at 75% 25%, rgba(201,168,76,0.2) 0%, transparent 50%),
+      radial-gradient(ellipse at 25% 75%, rgba(196,119,106,0.2) 0%, transparent 50%),
+      #EAE3D8;
+    align-items: flex-start;
+    padding-top: 60px;
+  }
+
+  .slide-content-3 { width: min(900px, 95vw); }
+
+  .versus-wrap {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 18px;
+    align-items: start;
+    margin-top: 8px;
+  }
+  .vs-badge {
+    background: var(--navy);
+    color: white;
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    align-self: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    position: relative;
+    top: 40px;
+  }
+
+  .big-card {
+    background: var(--warm-white);
+    border-radius: 6px;
+    box-shadow: 5px 6px 22px rgba(0,0,0,0.11);
+    overflow: hidden;
+  }
+  .big-card-header {
+    padding: 18px 22px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .big-card-header.curing { background: linear-gradient(135deg, rgba(217,140,126,0.25), rgba(242,196,184,0.2)); }
+  .big-card-header.caring { background: linear-gradient(135deg, rgba(122,158,126,0.25), rgba(168,197,171,0.2)); }
+
+  .big-card-icon {
+    font-size: 32px;
+    line-height: 1;
+  }
+  .big-card-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--navy);
+  }
+  .big-card-header p {
+    font-size: 11px;
+    color: var(--brown);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  .big-card-body { padding: 18px 22px 20px; }
+  .action-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #3a3020;
+  }
+  .action-item.curing { background: rgba(217,140,126,0.12); }
+  .action-item.caring { background: rgba(122,158,126,0.12); }
+  .action-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+    color: white;
+    margin-top: 1px;
+  }
+  .action-num.curing { background: var(--rose); }
+  .action-num.caring { background: var(--sage-dark); }
+
+  .note-strip {
+    background: rgba(201,168,76,0.15);
+    border-left: 4px solid var(--gold);
+    padding: 12px 16px;
+    border-radius: 0 4px 4px 0;
+    font-size: 12.5px;
+    font-style: italic;
+    color: var(--brown);
+    margin-top: 12px;
+  }
+
+  /* ════════════════════════════
+     SLIDE 4 – DAMPAK
+  ════════════════════════════ */
+  #slide-4 {
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(196,119,106,0.25) 0%, transparent 55%),
+      #ECE5DA;
+    align-items: flex-start;
+    padding-top: 60px;
+  }
+  .slide-content-4 { width: min(900px, 95vw); }
+
+  .dampak-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .dampak-card {
+    background: var(--warm-white);
+    border-radius: 6px;
+    padding: 20px;
+    box-shadow: 3px 5px 16px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  .dampak-card:nth-child(1) { transform: rotate(-0.7deg); }
+  .dampak-card:nth-child(2) { transform: rotate(0.5deg); }
+  .dampak-card:nth-child(3) { transform: rotate(-0.4deg); }
+  .dampak-card:nth-child(4) { transform: rotate(0.6deg); }
+  .dampak-card:nth-child(5) { transform: rotate(-0.3deg); }
+
+  .dampak-accent {
+    position: absolute;
+    top: 0; left: 0;
+    width: 5px; height: 100%;
+    border-radius: 6px 0 0 6px;
+  }
+  .dampak-card:nth-child(1) .dampak-accent { background: var(--rose); }
+  .dampak-card:nth-child(2) .dampak-accent { background: var(--sage-dark); }
+  .dampak-card:nth-child(3) .dampak-accent { background: var(--gold); }
+  .dampak-card:nth-child(4) .dampak-accent { background: var(--navy); }
+  .dampak-card:nth-child(5) .dampak-accent { background: var(--dusty-rose); }
+
+  .dampak-card-inner { padding-left: 14px; }
+  .dampak-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: rgba(139,111,85,0.15);
+    line-height: 1;
+    position: absolute;
+    top: 12px; right: 14px;
+  }
+  .dampak-emoji { font-size: 26px; margin-bottom: 8px; display: block; }
+  .dampak-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 14.5px;
+    color: var(--navy);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .dampak-desc {
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: #3a3020;
+  }
+
+  /* ════════════════════════════
+     SLIDE 5 – KESEIMBANGAN & REKOMENDASI
+  ════════════════════════════ */
+  #slide-5 {
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(168,197,171,0.35) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(201,168,76,0.25) 0%, transparent 50%),
+      #EAE3D8;
+    align-items: flex-start;
+    padding-top: 60px;
+  }
+  .slide-content-5 { width: min(900px, 95vw); }
+
+  .balance-section {
+    background: var(--warm-white);
+    border-radius: 6px;
+    box-shadow: 4px 5px 18px rgba(0,0,0,0.1);
+    padding: 24px;
+    transform: rotate(-0.4deg);
+    margin-bottom: 22px;
+    position: relative;
+  }
+  .balance-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--navy);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .balance-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .balance-item {
+    background: rgba(122,158,126,0.1);
+    border: 1px solid rgba(122,158,126,0.25);
+    border-radius: 5px;
+    padding: 12px 14px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #3a3020;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .balance-item-icon {
+    font-size: 18px; flex-shrink: 0; margin-top: 1px;
+  }
+
+  .rekom-section {
+    background: var(--warm-white);
+    border-radius: 6px;
+    box-shadow: 4px 5px 18px rgba(0,0,0,0.1);
+    padding: 24px;
+    transform: rotate(0.3deg);
+    position: relative;
+  }
+  .rekom-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--navy);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .rekom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 10px;
+  }
+  .rekom-item {
+    background: linear-gradient(135deg, rgba(242,196,184,0.2), rgba(255,249,242,0.8));
+    border: 1px solid rgba(217,140,126,0.25);
+    border-radius: 5px;
+    padding: 12px 14px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #3a3020;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .rekom-letter {
+    background: var(--rose);
+    color: white;
+    font-weight: 700;
+    font-size: 11px;
+    width: 22px; height: 22px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ════════════════════════════
+     SLIDE 6 – KESIMPULAN
+  ════════════════════════════ */
+  #slide-6 {
+    background:
+      radial-gradient(ellipse at 30% 70%, rgba(217,140,126,0.3) 0%, transparent 55%),
+      radial-gradient(ellipse at 70% 30%, rgba(122,158,126,0.25) 0%, transparent 55%),
+      var(--cream);
+    min-height: 60vh;
+  }
+
+  .kesimpulan-board {
+    width: min(680px, 95vw);
+    position: relative;
+  }
+
+  .kesimpulan-card {
+    background: var(--warm-white);
+    border-radius: 6px;
+    padding: 44px 48px;
+    box-shadow: 6px 8px 28px rgba(0,0,0,0.14);
+    position: relative;
+    transform: rotate(-0.4deg);
+    text-align: center;
+  }
+
+  .kesimpulan-icon {
+    font-size: 52px;
+    margin-bottom: 20px;
+    display: block;
+  }
+  .kesimpulan-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .kesimpulan-sub {
+    font-family: 'Dancing Script', cursive;
+    font-size: 18px;
+    color: var(--rose);
+    margin-bottom: 24px;
+  }
+  .kesimpulan-text {
+    font-size: 14px;
+    line-height: 1.85;
+    color: #3a3020;
+    font-style: italic;
+    border-top: 2px solid;
+    border-bottom: 2px solid;
+    border-image: linear-gradient(90deg, transparent, var(--gold), transparent) 1;
+    padding: 20px 0;
+    margin-bottom: 20px;
+  }
+  .kesimpulan-quote {
+    font-family: 'Dancing Script', cursive;
+    font-size: 20px;
+    color: var(--dusty-rose);
+    margin-top: 4px;
+  }
+  .signature {
+    font-family: 'Dancing Script', cursive;
+    font-size: 18px;
+    color: var(--brown);
+    margin-top: 20px;
+  }
+
+  /* ── STICKER DECORATIONS THROUGHOUT ── */
+  .deco-corner { position: absolute; font-size: 32px; opacity: 0.6; user-select: none; }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 600px) {
+    .grid-2, .grid-3, .versus-wrap, .balance-list { grid-template-columns: 1fr; }
+    .versus-wrap .vs-badge { display: none; }
+    .cover-main-card { padding: 32px 24px 28px; }
+    .kesimpulan-card { padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV DOTS -->
+<nav class="nav-dots" id="navDots">
+  <div class="nav-dot active" onclick="goSlide(0)" title="Cover"></div>
+  <div class="nav-dot" onclick="goSlide(1)" title="Kasus"></div>
+  <div class="nav-dot" onclick="goSlide(2)" title="Curing & Caring"></div>
+  <div class="nav-dot" onclick="goSlide(3)" title="Dampak"></div>
+  <div class="nav-dot" onclick="goSlide(4)" title="Rekomendasi"></div>
+  <div class="nav-dot" onclick="goSlide(5)" title="Kesimpulan"></div>
+</nav>
+
+<!-- ════ SLIDE 1 : COVER ════ -->
+<section class="slide" id="slide-1">
+  <div class="sticker-flower" style="top:6%;left:5%;transform:rotate(-15deg);">🌸</div>
+  <div class="sticker-flower" style="top:12%;right:8%;transform:rotate(20deg);font-size:22px;">🌿</div>
+  <div class="sticker-flower" style="bottom:10%;left:8%;transform:rotate(10deg);font-size:24px;">🌷</div>
+  <div class="sticker-flower" style="bottom:8%;right:6%;transform:rotate(-20deg);font-size:20px;">🍃</div>
+
+  <div class="cover-board fade-in">
+    <!-- Tape top-left -->
+    <div class="tape tape-h" style="position:absolute;top:-10px;left:30px;transform:rotate(-3deg);"></div>
+    <div class="tape tape-h" style="position:absolute;top:-10px;right:30px;transform:rotate(3deg);"></div>
+
+    <div class="cover-main-card">
+      <div class="cover-border"></div>
+
+      <div style="text-align:center;margin-bottom:10px;">
+        <span style="font-size:48px;">🏥</span>
+      </div>
+
+      <div class="ribbon" style="background:linear-gradient(135deg,var(--sage),var(--sage-dark));display:block;text-align:center;margin-bottom:14px;">
+        Konsep Dasar Keperawatan
+      </div>
+
+      <h1 class="cover-title">Caring & Curing<br>dalam Pelayanan Keperawatan</h1>
+      <p class="cover-subtitle">Analisis Kasus Diabetes Mellitus Tipe 2</p>
+
+      <div class="cover-divider"></div>
+
+      <div class="identity-box">
+        <div class="identity-row">
+          <span class="id-label">Nama</span>
+          <span class="id-value">Natasya Adia Laura</span>
+        </div>
+        <div class="identity-row">
+          <span class="id-label">NIM</span>
+          <span class="id-value">25142010062</span>
+        </div>
+        <div class="identity-row">
+          <span class="id-label">Prodi</span>
+          <span class="id-value">S1 Keperawatan dan Profesi Ners</span>
+        </div>
+        <div class="identity-row">
+          <span class="id-label">Kelas</span>
+          <span class="id-value">B25</span>
+        </div>
+        <div class="identity-row">
+          <span class="id-label">Mata Kuliah</span>
+          <span class="id-value">Konsep Dasar Keperawatan</span>
+        </div>
+        <div class="identity-row">
+          <span class="id-label">Dosen Pengampu</span>
+          <span class="id-value">Titik Nuryanti., S. Kep., Ns., M. Kep</span>
+        </div>
+      </div>
+
+      <div style="text-align:center;">
+        <span class="cover-badge">STIKES Rajekwesi Bojonegoro · 2025</span>
+      </div>
+
+      <div class="corner-fold"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ SLIDE 2 : KASUS & IDENTIFIKASI MASALAH ════ -->
+<section class="slide" id="slide-2">
+  <div class="sticker-med" style="top:14px;right:3%;transform:rotate(12deg);">💊</div>
+  <div class="sticker-med" style="bottom:30px;left:2%;transform:rotate(-8deg);">🩺</div>
+
+  <div class="slide-content-2">
+    <div class="slide-header fade-in">
+      <div class="slide-number">01</div>
+      <div class="slide-title-block">
+        <h2>Kasus & Identifikasi Masalah</h2>
+        <p>Deskripsi · Fisik · Psikologis · Sosial</p>
+      </div>
+    </div>
+
+    <!-- Kasus Narasi -->
+    <div class="kasus-card fade-in" style="margin-bottom:20px;">
+      <div class="tape tape-sm" style="position:absolute;top:-8px;left:50%;transform:translateX(-50%) rotate(-1deg);"></div>
+      <h3>📋 Ringkasan Kasus</h3>
+      <p>
+        Pasien laki-laki usia <strong>65 tahun</strong>, dirawat di ruang penyakit dalam dengan diagnosis <strong>Diabetes Mellitus tipe 2 + luka kaki diabetik</strong>. Telah dirawat selama 5 hari dengan perawatan luka dan terapi insulin. Pasien terlihat <em>murung, jarang berbicara, dan menolak makan</em>. Pasien takut kehilangan kakinya karena kemungkinan amputasi. Keluarga menyampaikan pasien merasa kesepian dan kurang diperhatikan karena perawat hanya datang untuk tindakan medis tanpa memberikan waktu untuk berbicara. Kondisi ruang rawat inap sangat sibuk. Seorang <strong>mahasiswa praktik</strong> berhasil memberikan dukungan emosional sehingga pasien tampak lebih tenang.
+      </p>
+      <div class="corner-fold"></div>
+    </div>
+
+    <!-- 3 Masalah -->
+    <div class="grid-3 fade-in">
+      <!-- Fisik -->
+      <div class="masalah-card fisik paper-card">
+        <div class="tape tape-sm" style="position:absolute;top:-8px;left:20px;transform:rotate(-2deg);"></div>
+        <div class="masalah-header fisik">
+          <div class="masalah-icon fisik">🩹</div>
+          <h3>Masalah Fisik</h3>
+        </div>
+        <ul class="masalah-list fisik">
+          <li>Diabetes Mellitus tipe 2 dengan komplikasi luka kaki diabetik</li>
+          <li>Risiko amputasi ekstremitas bawah akibat komplikasi DM tipe 2</li>
+          <li>Ketergantungan terapi insulin dan perawatan luka harian</li>
+          <li>Risiko infeksi dan gangguan integritas jaringan pada kaki</li>
+        </ul>
+        <div class="corner-fold"></div>
+      </div>
+
+      <!-- Psikologis -->
+      <div class="masalah-card psiko paper-card">
+        <div class="tape tape-sm" style="position:absolute;top:-8px;right:20px;transform:rotate(2deg);"></div>
+        <div class="masalah-header psiko">
+          <div class="masalah-icon psiko">🧠</div>
+          <h3>Masalah Psikologis</h3>
+        </div>
+        <ul class="masalah-list psiko">
+          <li>Kecemasan dan ketakutan akan kemungkinan amputasi kaki</li>
+          <li>Depresi ringan: murung, jarang bicara, menolak makan</li>
+          <li>Perasaan kesepian dan kurang diperhatikan oleh tenaga kesehatan</li>
+        </ul>
+        <div class="corner-fold"></div>
+      </div>
+
+      <!-- Sosial -->
+      <div class="masalah-card sosial paper-card">
+        <div class="tape tape-sm" style="position:absolute;top:-8px;left:40%;transform:rotate(-1deg);"></div>
+        <div class="masalah-header sosial">
+          <div class="masalah-icon sosial">👥</div>
+          <h3>Masalah Sosial</h3>
+        </div>
+        <ul class="masalah-list sosial">
+          <li>Kurangnya dukungan emosional dari tenaga kesehatan (komunikasi terapeutik)</li>
+          <li>Pasien merasa terisolasi secara emosional di lingkungan rawat inap</li>
+          <li>Keluarga merasa diabaikan ketika menyampaikan kekhawatiran pada perawat</li>
+        </ul>
+        <div class="corner-fold"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ SLIDE 3 : CURING & CARING ════ -->
+<section class="slide" id="slide-3">
+  <div class="sticker-med" style="top:18px;left:3%;transform:rotate(-12deg);">💉</div>
+  <div class="sticker-med" style="bottom:28px;right:3%;transform:rotate(10deg);">❤️</div>
+
+  <div class="slide-content-3">
+    <div class="slide-header fade-in">
+      <div class="slide-number">02</div>
+      <div class="slide-title-block">
+        <h2>Perilaku Curing & Caring</h2>
+        <p>Tindakan Medis · Tindakan Humanistik</p>
+      </div>
+    </div>
+
+    <div class="versus-wrap fade-in">
+      <!-- CURING -->
+      <div class="big-card">
+        <div class="tape tape-h" style="position:absolute;top:-10px;left:30%;transform:rotate(-2deg);"></div>
+        <div class="big-card-header curing">
+          <span class="big-card-icon">⚕️</span>
+          <div>
+            <h3>CURING</h3>
+            <p>Tindakan medis berbasis biologis/klinis untuk menyembuhkan kondisi patologis</p>
+          </div>
+        </div>
+        <div class="big-card-body">
+          <div class="action-item curing">
+            <span class="action-num curing">1</span>
+            Pemberian obat sesuai instruksi dokter secara tepat waktu dan prosedural
+          </div>
+          <div class="action-item curing">
+            <span class="action-num curing">2</span>
+            Monitoring glukosa darah untuk memantau perkembangan DM tipe 2 dan menyesuaikan dosis insulin
+          </div>
+          <div class="action-item curing">
+            <span class="action-num curing">3</span>
+            Tindakan <em>wound care</em> pada luka kaki diabetik secara prosedural
+          </div>
+          <div class="action-item curing">
+            <span class="action-num curing">4</span>
+            Pemberian insulin sebagai terapi farmakologis utama untuk mengontrol kadar gula darah
+          </div>
+        </div>
+      </div>
+
+      <div class="vs-badge">VS</div>
+
+      <!-- CARING -->
+      <div class="big-card">
+        <div class="tape tape-h" style="position:absolute;top:-10px;right:30%;transform:rotate(2deg);"></div>
+        <div class="big-card-header caring">
+          <span class="big-card-icon">🤲</span>
+          <div>
+            <h3>CARING</h3>
+            <p>Tindakan keperawatan humanistik holistik – dilakukan mahasiswa praktik dalam kasus ini</p>
+          </div>
+        </div>
+        <div class="big-card-body">
+          <div class="action-item caring">
+            <span class="action-num caring">1</span>
+            Meluangkan waktu untuk berbicara dan mendengarkan keluhan pasien secara aktif
+          </div>
+          <div class="action-item caring">
+            <span class="action-num caring">2</span>
+            Memberikan dukungan emosional secara aktif dan penuh empati
+          </div>
+          <div class="action-item caring">
+            <span class="action-num caring">3</span>
+            Menciptakan ruang aman sehingga pasien mampu menceritakan kekhawatirannya mengenai penyakit dan kondisi keluarga
+          </div>
+          <div class="action-item caring">
+            <span class="action-num caring">4</span>
+            Hadir secara penuh dan empatik tanpa terburu-buru, memberikan perhatian tulus
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-strip fade-in" style="max-width:100%;margin-top:20px;">
+      ⚠️ <strong>Catatan penting:</strong> Tindakan caring seharusnya dilakukan oleh perawat, bukan hanya mahasiswa praktik. Hal ini mencerminkan adanya kesenjangan dalam pelaksanaan asuhan keperawatan holistik di ruang rawat inap yang sibuk.
+    </div>
+  </div>
+</section>
+
+<!-- ════ SLIDE 4 : DAMPAK ════ -->
+<section class="slide" id="slide-4">
+  <div class="sticker-med" style="top:16px;right:4%;transform:rotate(14deg);">😔</div>
+  <div class="sticker-med" style="bottom:24px;left:3%;transform:rotate(-10deg);">📉</div>
+
+  <div class="slide-content-4">
+    <div class="slide-header fade-in">
+      <div class="slide-number">03</div>
+      <div class="slide-title-block">
+        <h2>Dampak Kurangnya Perilaku Caring</h2>
+        <p>Analisis Psikologis · Klinis · Relasional</p>
+      </div>
+    </div>
+
+    <div class="dampak-grid fade-in">
+      <div class="dampak-card paper-card">
+        <div class="dampak-accent"></div>
+        <div class="dampak-num">01</div>
+        <div class="dampak-card-inner">
+          <span class="dampak-emoji">😰</span>
+          <div class="dampak-title">Peningkatan Kecemasan</div>
+          <p class="dampak-desc">Pasien yang tidak mendapat ruang untuk mengungkapkan ketakutannya akan amputasi mengalami kecemasan yang tidak terkelola. Secara fisiologis, hal ini meningkatkan kadar kortisol dan memperburuk kontrol gula darah.</p>
+        </div>
+      </div>
+
+      <div class="dampak-card paper-card">
+        <div class="dampak-accent"></div>
+        <div class="dampak-num">02</div>
+        <div class="dampak-card-inner">
+          <span class="dampak-emoji">🌧️</span>
+          <div class="dampak-title">Depresi & Withdrawal Sosial</div>
+          <p class="dampak-desc">Sikap murung, jarang bicara, dan menolak makan merupakan tanda-tanda depresi reaktif. Kurangnya koneksi emosional dengan perawat memperkuat perasaan bahwa dirinya tidak berharga dan tidak diperhatikan.</p>
+        </div>
+      </div>
+
+      <div class="dampak-card paper-card">
+        <div class="dampak-accent"></div>
+        <div class="dampak-num">03</div>
+        <div class="dampak-card-inner">
+          <span class="dampak-emoji">💊</span>
+          <div class="dampak-title">Penurunan Motivasi Sembuh</div>
+          <p class="dampak-desc">Pasien yang merasa tidak diperhatikan cenderung tidak kooperatif dalam pengobatan, seperti menolak makan — berbahaya bagi pasien diabetes karena dapat menyebabkan hipoglikemia.</p>
+        </div>
+      </div>
+
+      <div class="dampak-card paper-card">
+        <div class="dampak-accent"></div>
+        <div class="dampak-num">04</div>
+        <div class="dampak-card-inner">
+          <span class="dampak-emoji">🏝️</span>
+          <div class="dampak-title">Kesepian & Isolasi Emosional</div>
+          <p class="dampak-desc">Meskipun berada di lingkungan ramai, pasien mengalami <em>loneliness</em> emosional yang memperburuk kondisi mentalnya dan menghambat proses pemulihan holistik.</p>
+        </div>
+      </div>
+
+      <div class="dampak-card paper-card">
+        <div class="dampak-accent"></div>
+        <div class="dampak-num">05</div>
+        <div class="dampak-card-inner">
+          <span class="dampak-emoji">🔗</span>
+          <div class="dampak-title">Hilangnya Kepercayaan</div>
+          <p class="dampak-desc">Pasien dan keluarga kehilangan kepercayaan terhadap tim perawat, yang dapat berdampak pada kepatuhan jangka panjang terhadap terapi dan kesinambungan perawatan.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ SLIDE 5 : KESEIMBANGAN & REKOMENDASI ════ -->
+<section class="slide" id="slide-5">
+  <div class="sticker-med" style="top:18px;right:4%;transform:rotate(-14deg);">⚖️</div>
+  <div class="sticker-med" style="bottom:22px;left:2%;transform:rotate(10deg);">✨</div>
+
+  <div class="slide-content-5">
+    <div class="slide-header fade-in">
+      <div class="slide-number">04</div>
+      <div class="slide-title-block">
+        <h2>Keseimbangan & Rekomendasi</h2>
+        <p>Integrasi Caring–Curing · Tindakan Nyata</p>
+      </div>
+    </div>
+
+    <!-- Keseimbangan -->
+    <div class="balance-section fade-in">
+      <div class="tape tape-h" style="position:absolute;top:-10px;left:40px;transform:rotate(-1.5deg);"></div>
+      <h3>⚖️ Cara Menyeimbangkan Caring & Curing</h3>
+      <div class="balance-list">
+        <div class="balance-item">
+          <span class="balance-item-icon">🔗</span>
+          <div><strong>Integrasi dalam tindakan medis</strong> — Saat melakukan wound care, perawat menyelipkan komunikasi terapeutik, menjelaskan prosedur, menanyakan perasaan, dan memberikan penguatan.</div>
+        </div>
+        <div class="balance-item">
+          <span class="balance-item-icon">⏱️</span>
+          <div><strong>Manajemen waktu terstruktur</strong> — Alokasikan 5–10 menit khusus per pasien untuk interaksi emosional yang bermakna dan terfokus, meski ruangan sibuk.</div>
+        </div>
+        <div class="balance-item">
+          <span class="balance-item-icon">🌐</span>
+          <div><strong>Pendekatan holistik bio-psiko-sosio-spiritual</strong> — Kaji kondisi psikologis, sosial, dan spiritual pasien dalam setiap pengkajian keperawatan, bukan hanya fisik.</div>
+        </div>
+        <div class="balance-item">
+          <span class="balance-item-icon">🗣️</span>
+          <div><strong>Komunikasi terapeutik konsisten</strong> — Teknik mendengarkan aktif, kontak mata, dan bahasa tubuh terbuka untuk membangun kepercayaan dan keterbukaan pasien.</div>
+        </div>
+        <div class="balance-item">
+          <span class="balance-item-icon">🤝</span>
+          <div><strong>Kolaborasi tim</strong> — Libatkan psikolog klinis, konselor, atau pekerja sosial bila menemukan tanda-tanda gangguan psikologis pada pasien.</div>
+        </div>
+        <div class="balance-item">
+          <span class="balance-item-icon">📚</span>
+          <div><strong>Edukasi berbasis empati</strong> — Berikan informasi tentang diabetes dan risiko amputasi dengan pendekatan suportif, bukan menakutkan, agar pasien lebih siap secara mental.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rekomendasi -->
+    <div class="rekom-section fade-in">
+      <div class="tape tape-sm" style="position:absolute;top:-8px;right:60px;transform:rotate(1.5deg);"></div>
+      <h3>💡 Rekomendasi Tindakan Caring</h3>
+      <div class="rekom-grid">
+        <div class="rekom-item">
+          <span class="rekom-letter">A</span>
+          <div><strong>Asesmen psikososial rutin</strong> — Pengkajian psikologis harian menggunakan PHQ-2 atau HADS untuk deteksi dini gangguan emosional.</div>
+        </div>
+        <div class="rekom-item">
+          <span class="rekom-letter">B</span>
+          <div><strong>Ronde caring harian</strong> — Jadwal kunjungan khusus untuk mendengar dan memvalidasi perasaan pasien, bukan untuk tindakan medis.</div>
+        </div>
+        <div class="rekom-item">
+          <span class="rekom-letter">C</span>
+          <div><strong>Informed emotional support</strong> — Saat pasien takut amputasi, berikan informasi akurat namun empatik disertai penjelasan langkah pencegahan yang dilakukan tim medis.</div>
+        </div>
+        <div class="rekom-item">
+          <span class="rekom-letter">D</span>
+          <div><strong>Pelibatan keluarga aktif</strong> — Family meeting singkat untuk mengedukasi keluarga cara memberikan dukungan emosional yang tepat selama hospitalisasi.</div>
+        </div>
+        <div class="rekom-item">
+          <span class="rekom-letter">E</span>
+          <div><strong>Dokumentasi kebutuhan emosional</strong> — Catat kebutuhan psikologis pasien dalam catatan keperawatan sebagai bagian rencana asuhan, bukan hanya tindakan fisik.</div>
+        </div>
+        <div class="rekom-item">
+          <span class="rekom-letter">F</span>
+          <div><strong>Sentuhan terapeutik</strong> — Sentuhan ringan yang tepat (memegang tangan saat pasien cemas) terbukti menurunkan kortisol dan meningkatkan rasa aman.</div>
+        </div>
+        <div class="rekom-item">
+          <span class="rekom-letter">G</span>
+          <div><strong>Program "Pasien Bicara"</strong> — Sesi terjadwal di mana pasien diberi kesempatan bercerita bebas kepada perawat tanpa agenda medis.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ SLIDE 6 : KESIMPULAN ════ -->
+<section class="slide" id="slide-6">
+  <div class="sticker-flower" style="top:8%;left:4%;transform:rotate(-12deg);">🌺</div>
+  <div class="sticker-flower" style="top:10%;right:5%;transform:rotate(15deg);font-size:22px;">🌿</div>
+  <div class="sticker-flower" style="bottom:8%;left:6%;transform:rotate(8deg);font-size:24px;">🌸</div>
+  <div class="sticker-flower" style="bottom:10%;right:4%;transform:rotate(-18deg);font-size:20px;">🍃</div>
+
+  <div class="kesimpulan-board fade-in">
+    <div class="tape tape-h" style="position:absolute;top:-10px;left:35%;transform:translateX(-50%) rotate(-2deg);"></div>
+    <div class="tape tape-h" style="position:absolute;top:-10px;right:10%;transform:rotate(2deg);"></div>
+
+    <div class="kesimpulan-card">
+      <div class="cover-border"></div>
+      <span class="kesimpulan-icon">💙</span>
+      <div class="ribbon" style="background:linear-gradient(135deg,var(--rose),var(--dusty-rose));margin-bottom:16px;">Kesimpulan</div>
+      <h2 class="kesimpulan-title">Curing Tanpa Caring</h2>
+      <p class="kesimpulan-sub">adalah perawatan yang tidak lengkap</p>
+
+      <p class="kesimpulan-text">
+        Kasus ini menegaskan bahwa curing tanpa caring menghasilkan perawatan yang tidak lengkap. Pemulihan pasien bukan hanya tentang luka yang sembuh secara fisik, tetapi tentang manusia yang merasa dihargai, didengar, dan dipedulikan secara menyeluruh.
+        <br><br>
+        Perawat memiliki tanggung jawab moral dan profesional untuk mengintegrasikan kedua aspek ini dalam setiap tindakan keperawatan — bukan sebagai dua hal yang terpisah, tetapi sebagai satu kesatuan asuhan yang holistik dan manusiawi.
+      </p>
+
+      <p class="kesimpulan-quote">"To cure sometimes, to relieve often, to comfort always."</p>
+      <p style="font-size:11px;color:var(--brown);margin-top:4px;letter-spacing:1px;">— Hippocrates</p>
+
+      <div class="cover-divider" style="margin-top:20px;"></div>
+
+      <p class="signature">Natasya Adia Laura · 25142010062</p>
+      <p style="font-size:11px;color:var(--brown);letter-spacing:1px;margin-top:4px;">S1 Keperawatan — STIKES Rajekwesi Bojonegoro</p>
+      <div class="corner-fold"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // ── INTERSECTION OBSERVER FOR FADE-IN ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const items = entry.target.querySelectorAll('.fade-in');
+        items.forEach((el, i) => {
+          setTimeout(() => el.classList.add('visible'), i * 120);
+        });
+        // Also handle the element itself if it has .fade-in
+        if (entry.target.classList.contains('fade-in')) {
+          entry.target.classList.add('visible');
+        }
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.slide').forEach(slide => observer.observe(slide));
+
+  // Also trigger on direct .fade-in elements
+  const fadeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+
+  // ── NAV DOT ACTIVE STATE ──
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.nav-dot');
+
+  const slideObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+        const idx = Array.from(slides).indexOf(entry.target);
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      }
+    });
+  }, { threshold: 0.5 });
+  slides.forEach(s => slideObserver.observe(s));
+
+  function goSlide(idx) {
+    slides[idx].scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
